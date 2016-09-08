@@ -7,7 +7,7 @@
 # Pull base image.
 FROM ubuntu
 
-RUN echo "deb http://archive.ubuntu.com/ubuntu/ raring main universe" >> /etc/apt/sources.list
+#RUN echo "deb http://archive.ubuntu.com/ubuntu/ raring main universe" >> /etc/apt/sources.list
 # Update the repository
 RUN apt-get update
 # Install necessary tools
