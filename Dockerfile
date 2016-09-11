@@ -1,37 +1,20 @@
-#
-# Nginx Dockerfile
-#
-# https://github.com/dockerfile/nginx
-#
+FROM index.tenxcloud.com/docker_library/debian:jessie
+MAINTAINER lshsz@thesis.com
+RUN apt-key adv --server hkp://pgp.mit.edu:80 --recv-keys 573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62
+RUN echo "deb http://nginx.org/packages/mainline/debian/ jessie nginx" >> /etc/apt/sources.list
 
-# Pull base image.
-FROM ubuntu
+ENV  NGINX_VERSION 1.9.9-1~jessie
+RUN apt-get update && \
+    apt-get install -y ca-certificates nginx=${NGINX_VERSION} && \
+    rm -rf /var/lib/apt/lists/* && \
+    apt-get install -y nano wget dialog net-tools
+ 
+RUN rm -v /etc/nginx/nginx.conf
+ADD nginx.conf /etc/nginx
+#RUN echo "daemon off;" >> /etc/nginx/nginx.conf
 
-#RUN echo "deb http://archive.ubuntu.com/ubuntu/ raring main universe" >> /etc/apt/sources.list
-# Update the repository
-RUN apt-get update
-# Install necessary tools
-RUN apt-get install -y nano wget dialog net-tools
-# Download and Install Nginx
-RUN apt-get install -y nginx
-# Install Nginx.
-#RUN \
- # add-apt-repository -y ppa:nginx/stable && \
-  #apt-get update && \
-  #apt-get install -y nginx && \
-  #rm -rf /var/lib/apt/lists/* && \
-  #echo "\ndaemon off;" >> /etc/nginx/nginx.conf && \
-  #chown -R www-data:www-data /var/lib/nginx
+VOLUME ["/var/cache/nginx"]
 
-# Define mountable directories.
-VOLUME ["/etc/nginx/sites-enabled", "/etc/nginx/certs", "/etc/nginx/conf.d", "/var/log/nginx", "/var/www/html"]
+EXPOSE 80 443
 
-# Define working directory.
-WORKDIR /etc/nginx
-
-# Define default command.
-CMD ["nginx"]
-
-# Expose ports.
-EXPOSE 80
-EXPOSE 443
+CMD ["nginx", "-g", "daemon off;"]
